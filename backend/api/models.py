@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -48,13 +49,13 @@ pk= uuid.uuid4().hex[:8]
 
 class Company(models.Model):
    
-    company_id = models.CharField(primary_key = True,max_length=8, editable=False)
+    company_id = models.CharField(primary_key = True,max_length=8, editable=False,default="")
     company_name = models.CharField(max_length=100)
     registration_date = models.DateField()
     registration_number = models.CharField(max_length=10)
     address = models.TextField()
     contact_person = models.CharField(max_length=100)
-    # number_of_departments= # Comma-separated list of departments
+    number_of_departments= models.IntegerField(default="") # Comma-separated list of departments
     num_employees = models.PositiveIntegerField(editable=False,default=0)
     contact_phone = models.CharField(max_length=20)
     email_address = models.EmailField()
@@ -67,14 +68,14 @@ class Company(models.Model):
 
 
 class Department(models.Model):
-    company_id= models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='department', default="")
     department_id = models.CharField(primary_key = True,max_length=8, editable=False)
     department_name = models.CharField(max_length=100)
 
-    # def save(self, *args, **kwargs):
-    #     if not self.department_id:
-    #         self.department_id = str(uuid.uuid4().hex)[:8]
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if not self.department_id:
+            self.department_id = str(uuid.uuid4().hex)[:8]
+        super().save(*args, **kwargs)
 
 
 
@@ -95,9 +96,9 @@ class Employee(models.Model):
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
     duties = models.TextField()
-    username = models.CharField(max_length=15, unique=True,default=0)
-    email = models.EmailField(unique=True, default='company@company.com')
-    password = models.CharField(max_length=12, default='123456789123')
+    username = models.CharField(max_length=15, unique=True,default="")
+    email = models.EmailField(unique=True, default="")
+    password = models.CharField(max_length=12, default="")
     employment_status = models.BooleanField(default=True)
     company_user_status = models.BooleanField(default=True)
 
