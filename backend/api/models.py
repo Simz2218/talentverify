@@ -50,15 +50,15 @@ pk= uuid.uuid4().hex[:8]
 class Company(models.Model):
    
     company_id = models.CharField(primary_key = True,max_length=8, editable=False,default="")
-    company_name = models.CharField(max_length=100)
+    company_name = models.CharField(max_length=100, unique=True)
     registration_date = models.DateField()
-    registration_number = models.CharField(max_length=10)
+    registration_number = models.CharField(max_length=10,unique=True)
     address = models.TextField()
-    contact_person = models.CharField(max_length=100)
+    contact_person = models.CharField(max_length=100, unique=True)
     number_of_departments= models.IntegerField(default="") # Comma-separated list of departments
     num_employees = models.PositiveIntegerField(editable=False,default=0)
-    contact_phone = models.CharField(max_length=20)
-    email_address = models.EmailField()
+    contact_phone = models.CharField(max_length=20,unique=True)
+    email_address = models.EmailField(unique=True)
 
     def save(self, *args, **kwargs):
         if not self.company_id:
@@ -90,13 +90,13 @@ class Employee(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    employee_id = models.CharField(max_length=11, null=True, blank=True)
+    employee_id = models.CharField(max_length=11, unique=True,null=False)
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
-    role = models.CharField(max_length=100)
+    role = models.CharField(max_length=100,null=False)
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
-    duties = models.TextField()
-    username = models.CharField(max_length=15, unique=True,default="")
+    duties = models.TextField(null=False)
+    username = models.CharField(max_length=15, unique=True,default="",null=False)
     email = models.EmailField(unique=True, default="")
     password = models.CharField(max_length=12, default="")
     employment_status = models.BooleanField(default=True)

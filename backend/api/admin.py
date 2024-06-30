@@ -19,7 +19,7 @@ class CompanyAdmin(admin.ModelAdmin):
 class EmployeeAdmin(admin.ModelAdmin):
    # Employee.objects.all().delete()
 
-    list_display=['last_name','company_id','employee_id','department_id','company_user_status','employment_status']
+    list_display=['last_name','company_id','employee_id','department_id','company_user_status','employment_status','username','email']
     
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
