@@ -11,41 +11,6 @@ from django.db.models import Count
 from django.conf import settings
 
 
-class User(AbstractUser):
-        username = models.CharField(max_length=100)
-        email = models.EmailField(unique=True)
-        password=models.CharField(max_length=21)
-        USERNAME_FIELD = 'email'
-        REQUIRED_FIELDS = ['username']
-
-        def profile(self):
-            profile = Profile.objects.get(user=self)
-
-class Profile(models.Model):
-    user = models.OneToOneField(User,
-    on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=1000)
-    bio = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="user_images",
-    default="default.jpg")
-    verified = models.BooleanField(default=False)
-    
-    def __str__(self):
-        return self.name
-   
-
-def create_user_profile(sender, instance, created, **kwargs):
-        
-    if created:
-     Profile.objects.create(user=instance)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
-        post_save.connect(create_user_profile, sender=User)
-        post_save.connect(save_user_profile, sender=User)
-        
-        
-
-pk= uuid.uuid4().hex[:8]
 
 class Company(models.Model):
    
@@ -59,6 +24,7 @@ class Company(models.Model):
     num_employees = models.PositiveIntegerField(editable=False,default=0)
     contact_phone = models.CharField(max_length=20,unique=True)
     email_address = models.EmailField(unique=True)
+    logo = models.ImageField(upload_to="company_images",default="default.jpg")
 
     def save(self, *args, **kwargs):
         if not self.company_id:
@@ -82,8 +48,8 @@ class Department(models.Model):
 
     def __str__(self):
         return f"{self.company_id} - {self.department_name}"
-
-
+    
+    
 class Employee(models.Model):
     
     employment_id = models.CharField(primary_key = True,max_length=8, editable=False)
@@ -96,22 +62,65 @@ class Employee(models.Model):
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
     duties = models.TextField(null=False)
-    username = models.CharField(max_length=15, unique=True,default="",null=False)
+    username = models.CharField(max_length=15, unique=True,default="",blank=True)
     email = models.EmailField(unique=True, default="")
     password = models.CharField(max_length=12, default="")
     employment_status = models.BooleanField(default=True)
     company_user_status = models.BooleanField(default=True)
-
-
-
-
-
-
-
+    
+    
     def save(self, *args, **kwargs):
         if not self.employment_id:
             self.employment_id = str(uuid.uuid4().hex)[:8]
         super().save(*args, **kwargs)
+
+
+
+
+class User(AbstractUser):
+        username = models.CharField(max_length=100)
+        email = models.EmailField(unique=True)
+        password=models.CharField(max_length=21)
+        USERNAME_FIELD = 'email'
+        REQUIRED_FIELDS = ['username']
+
+        def profile(self):
+            profile = Profile.objects.get(user=self)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User,
+    on_delete=models.CASCADE)
+    employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=1000)
+    bio = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="user_images",default="default.jpg")
+    verified = models.BooleanField(default=False)
+    def __str__(self):
+        return self.full_name
+   
+
+def create_user_profile(sender, instance, created, **kwargs):
+        
+    if created:
+     Profile.objects.create(user=instance)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+        post_save.connect(create_user_profile, sender=User)
+        post_save.connect(save_user_profile, sender=User)
+        
+        
+
+pk= uuid.uuid4().hex[:8]
+
+
+
+
+
+
+
+
+
+   
 
 
 
