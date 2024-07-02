@@ -81,6 +81,8 @@ class User(AbstractUser):
         username = models.CharField(max_length=100)
         email = models.EmailField(unique=True)
         password=models.CharField(max_length=21)
+        company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='user')
+        employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
         USERNAME_FIELD = 'email'
         REQUIRED_FIELDS = ['username']
 
@@ -88,13 +90,13 @@ class User(AbstractUser):
             profile = Profile.objects.get(user=self)
 
 class Profile(models.Model):
-    user = models.OneToOneField(User,
-    on_delete=models.CASCADE)
-    employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    
     full_name = models.CharField(max_length=1000)
     bio = models.CharField(max_length=100)
     image = models.ImageField(upload_to="user_images",default="default.jpg")
     verified = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.full_name
    

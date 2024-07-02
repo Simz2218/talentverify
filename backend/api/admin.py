@@ -5,7 +5,7 @@ from api.models import Company,Employee,Department,EmployeeHistory,User,Profile
 
 class UserAdmin(admin.ModelAdmin):
    
-    list_display = ['username', 'email']
+    list_display = ['username', 'email','company', 'employment_id']
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'verified']
     list_editable = ['verified']
