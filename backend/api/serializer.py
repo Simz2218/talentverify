@@ -17,12 +17,12 @@ class MyTokenSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['full_name'] = user.profile.full_name
         token['username'] = user.username
-        token['employment_id'] = user.employment_id
+        token['employment_id'] = str(user.employment_id)
         token['email'] = user.email
         token['bio'] = user.profile.bio
         token['image'] = str(user.profile.image)
         token['verified'] = user.profile.verified
-        token['company'] = user.company
+        token['company'] = str(user.company)
         
         return token
 
