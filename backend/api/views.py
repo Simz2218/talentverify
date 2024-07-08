@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from api.models import Company,Employee,Department,EmployeeHistory,User,Profile
-from api.serializer import  USerSerializer, MyTokenSerializer,RegisterSerializer
+from api.serializer import  USerSerializer, MyTokenSerializer,RegisterSerializer,CoRegisterSerializer,addDepartmentSerializer
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import generics, status, permissions
@@ -15,7 +15,15 @@ class RegisterView(generics.CreateAPIView):
     permission_classes=([AllowAny])
     serializer_class=RegisterSerializer
 
-from rest_framework.permissions import AllowAny, IsAuthenticated
+class CoRegisterView(generics.CreateAPIView):
+    queryset= Company.objects.all()
+    permission_classes=([AllowAny])
+    serializer_class=CoRegisterSerializer
+
+class addDepartmentView(generics.CreateAPIView):
+    queryset= Department.objects.all()
+    permission_classes=([AllowAny])
+    serializer_class=addDepartmentSerializer
 
 # ...
 

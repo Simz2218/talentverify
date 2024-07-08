@@ -3,6 +3,7 @@ from django.db import transaction
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
+from django.db.models import Q
 
 
 class USerSerializer(serializers.ModelSerializer):
@@ -87,3 +88,69 @@ class RegisterSerializer(serializers.ModelSerializer):
         company.save()
 
         return user
+    
+    
+    # Company Registration
+    
+class CoRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ['company_name', 'registration_number', 'registration_date', 'address', 'contact_person', 'email_address', 'contact_phone', ]
+
+    def validate(self, attrs):
+        company = attrs['company_name']
+        registration_number = attrs['registration_number']
+        email = attrs['email_address']
+        phone = attrs['contact_phone']
+
+        if Company.objects.filter(
+            Q(company_name=company) |
+            Q(registration_number=registration_number) |
+            Q(email_address=email) |
+            Q(contact_phone=phone)
+        ).exists():
+            raise serializers.ValidationError("A company with the same name, registration number, email, or phone number already exists.")
+
+        return attrs
+
+    def create(self, validated_data):
+        
+        company = Company.objects.create(
+            
+            
+            company_name=validated_data['company_name'],
+            registration_number=validated_data['registration_number'],
+            registration_date=validated_data['registration_date'],
+            address=validated_data['address'],
+            contact_person=validated_data['contact_person'],
+            email_address=validated_data['email_address'],
+            contact_phone=validated_data['contact_phone'],
+            
+        )
+        
+        
+        return company
+
+
+class addDepartmentSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Department
+        fields=['company','department_name']
+        
+   
+    def validate(self, attrs):
+        company = attrs['company']
+        department_name = attrs['department_name']
+
+        if Department.objects.filter(company=company, department_name=department_name).exists():
+            raise serializers.ValidationError(f"A department with the name '{department_name}' already exists in your company.")
+
+        return attrs
+
+    def create(self, validated_data):
+        department = Department.objects.create(
+            company=validated_data['company'],
+            department_name=validated_data['department_name']
+        )
+        return department

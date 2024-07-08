@@ -5,7 +5,7 @@ from api.models import Company,Employee,Department,EmployeeHistory,User,Profile
 
 class UserAdmin(admin.ModelAdmin):
    
-    list_display = ['username', 'email','company', 'employment_id']
+    list_display = ['username', 'email','company', 'employment_id',"password"]
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'verified']
     list_editable = ['verified']
@@ -14,12 +14,12 @@ class ProfileAdmin(admin.ModelAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     #Company.objects.all().delete()
 
-    list_display =['company_name','company_id','num_employees','contact_phone','logo']
+    list_display =['company_name','company_id','num_employees','contact_phone']
 
 class EmployeeAdmin(admin.ModelAdmin):
    # Employee.objects.all().delete()
 
-    list_display=['last_name','company_id','employee_id','department_id','company_user_status','employment_status','username','email','employment_id']
+    list_display=['last_name','company_id','employee_id','department_id','company_user_status','employment_status','email','employment_id']
     
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

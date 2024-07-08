@@ -24,7 +24,7 @@ class Company(models.Model):
     num_employees = models.PositiveIntegerField(editable=False,default=0)
     contact_phone = models.CharField(max_length=20,unique=True)
     email_address = models.EmailField(unique=True)
-    logo = models.ImageField(upload_to="company_images",default="default.jpg")
+    
 
     def save(self, *args, **kwargs):
         if not self.company_id:
@@ -62,9 +62,9 @@ class Employee(models.Model):
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
     duties = models.TextField(null=False)
-    username = models.CharField(max_length=15, unique=True,default="",blank=True)
+   
     email = models.EmailField(unique=True, default="")
-    password = models.CharField(max_length=12, default="")
+    
     employment_status = models.BooleanField(default=True)
     company_user_status = models.BooleanField(default=True)
     
