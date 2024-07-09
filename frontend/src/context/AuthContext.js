@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const history = useHistory();
 
-  const loginUser = async (email, password) => {
+  const loginUser = async (email, password,) => {
     let response;
     let data;
     try {
@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({
           email,
           password,
+          
         }),
       });
       data = await response.json();
@@ -37,9 +38,12 @@ export const AuthProvider = ({ children }) => {
         console.log("Logged in");
         setAuthTokens(data);
         setUser(JSON.parse(localStorage.getItem("authTokens")));
-
         localStorage.setItem("authTokens", JSON.stringify(data));
-        history.push("/");
+        if (data.company_user_status===true) {
+          history.push("/homepage");
+        } else {
+          history.push("/dashboard");
+        }
       } else {
         console.log(response.status);
         console.log("There was an error");
@@ -159,10 +163,57 @@ export const AuthProvider = ({ children }) => {
         alert("something went wrong" + response.status);
       }
     } catch (error) {
-      console.error("Error in registerUser:", error);
+      console.error("Error in addDepartments:", error);
     }
   };
 
+  const employees = async (
+
+    company,
+    first_name,
+    last_name,
+    employee_id,
+    department_id,
+    role,
+    date_started_role,
+    date_left_role,
+    duties,
+    employment_status,
+
+
+  ) => {
+    let response;
+    try {
+      response = await fetch("http://127.0.0.1:8000/api/employees/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+
+          company,
+          first_name,
+          last_name,
+          employee_id,
+          department_id,
+          role,
+          date_started_role,
+          date_left_role,
+          duties,
+          employment_status,
+        }),
+      });
+      if (response.status === 201) {
+        history.push("/homepage");
+      } else {
+        console.log(response.status);
+        console.log("there was an issue with the server");
+        alert("something went wrong" + response.status);
+      }
+    } catch (error) {
+      console.error("Error in employees:", error);
+    }
+  };
 
 
   const ContextData = {
@@ -174,6 +225,7 @@ export const AuthProvider = ({ children }) => {
     logoutUser,
     registerCompany,
     addDepartments,
+    employees,
   };
 
   useEffect(() => {

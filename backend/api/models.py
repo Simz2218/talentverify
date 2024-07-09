@@ -56,17 +56,14 @@ class Employee(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    employee_id = models.CharField(max_length=11, unique=True,null=False)
+    employee_id = models.CharField(max_length=11,unique=True,null=False)
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
     role = models.CharField(max_length=100,null=False)
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
     duties = models.TextField(null=False)
-   
-    email = models.EmailField(unique=True, default="")
-    
     employment_status = models.BooleanField(default=True)
-    company_user_status = models.BooleanField(default=True)
+    
     
     
     def save(self, *args, **kwargs):
@@ -83,6 +80,7 @@ class User(AbstractUser):
         password=models.CharField(max_length=21)
         company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='user')
         employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+        company_user_status = models.BooleanField(default=True)
         USERNAME_FIELD = 'email'
         REQUIRED_FIELDS = ['username']
 
