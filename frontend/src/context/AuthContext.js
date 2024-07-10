@@ -39,10 +39,11 @@ export const AuthProvider = ({ children }) => {
         setAuthTokens(data);
         setUser(JSON.parse(localStorage.getItem("authTokens")));
         localStorage.setItem("authTokens", JSON.stringify(data));
+        history.push("/");
         if (data.company_user_status===true) {
           history.push("/homepage");
         } else {
-          history.push("/dashboard");
+          history.push("/register");
         }
       } else {
         console.log(response.status);

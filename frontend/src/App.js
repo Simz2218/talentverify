@@ -10,7 +10,6 @@ import Dashboard from "./views/Dashboard"
 import Navbar from "./views/Navbar"
 import RegisterCo from "./views/RegisterCo"
 import AddDepartment from './views/AddDepartment';
-import Home from "./views/Homepage"
 import Employees from './views/Employees';
 
 function App() {
@@ -18,6 +17,8 @@ function App() {
     <Router>
       <AuthProvider>
         <Navbar/>
+
+        
         <Switch>
 
         <PrivateRoute component= {Dashboard} path="/dashboard"  />
@@ -25,7 +26,7 @@ function App() {
         <Route component={Registerpage} path="/register"/>
         <Route component={RegisterCo} path="/registerco"/>
         <Route component={AddDepartment} path="/adddepartment"/>
-        <Route component={Home} path="/homepage" />
+        <Route component={Homepage} path="/homepage" />
         <Route component={Employees} path="/employees"/>
 
 

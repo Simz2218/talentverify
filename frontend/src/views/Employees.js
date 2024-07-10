@@ -144,6 +144,9 @@ function Employees() {
                                   placeholder="Date 'yyyy-mm-dd'"
                                   onChange={(e) => setDate_started_role(e.target.value)}
                                 />
+                                <label htmlFor="date-started-role-input" className="form-outline-label">
+                                    Date Started Role
+                                </label>
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -152,7 +155,11 @@ function Employees() {
                                   className="form-control form-control-lg"
                                   placeholder="Date Left Role"
                                   onChange={(e) => setDate_left_role(e.target.value)}
+                                  
                                 />
+                                <label htmlFor="date-left-role-input" className="form-outline-label">
+                                    Date left Role
+                                </label>
                               </div>
                               <div className="form-outline mb-4">
                                 <input
