@@ -1,3 +1,5 @@
+// api.js
+
 import axios from 'axios';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api';
@@ -17,3 +19,11 @@ export const deleteEmployee = (authTokens, employment_id) => axios.delete(`${API
 
 export const updateDepartment = (authTokens, department_id, data) => axios.put(`${API_BASE_URL}/departments/${department_id}/`, data, getConfig(authTokens));
 export const deleteDepartment = (authTokens, department_id) => axios.delete(`${API_BASE_URL}/departments/${department_id}/`, getConfig(authTokens));
+
+// Ensure this function is properly defined and exported
+export const uploadEmployeeData = (authTokens, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return axios.post(`${API_BASE_URL}/upload-employees/`, formData, getConfig(authTokens));
+};

@@ -84,7 +84,7 @@ const Homepage = () => {
     { title: 'Start Date', field: 'date_started_role', filtering: true },
     { title: 'End Date', field: 'date_left_role', filtering: true },
     { title: 'Duties', field: 'duties', filtering: true },
-    { title: 'Company User Status', field: 'employment_status', filtering: true },
+    { title: 'Employed', field: 'employment_status', filtering: true },
     { title: 'Employment ID', field: 'employment_id', filtering: true },
     {
       title: 'Actions',
@@ -107,12 +107,14 @@ const Homepage = () => {
   const userColumns = [
     { title: 'Username', field: 'username', filtering: true },
     { title: 'Email', field: 'email', filtering: true },
-    { title: 'Role', field: 'role', filtering: true },
+    { title: 'User ID', field: 'employment_id', filtering: true },
+    { title: 'Company User', field: 'company_user_status', filtering: true },
   ];
 
   const departmentColumns = [
     { title: 'Company', field: 'company', filtering: true },
     { title: 'Department Name', field: 'department_name', filtering: true },
+    { title: 'Department ID', field: 'department_id', filtering: true },
     {
       title: 'Actions',
       field: 'actions',

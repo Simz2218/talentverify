@@ -43,7 +43,7 @@ function Navbar() {
                 </li>
               </>
             }
-              {token !==null &&
+              {token !==null && 
                 <>
                 <li class="nav-item">
                   <a class="nav-link" href="#">Dashboard</a>

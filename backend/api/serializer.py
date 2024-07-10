@@ -118,7 +118,7 @@ class CoRegisterSerializer(serializers.ModelSerializer):
 class addDepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ['company', 'department_name']
+        fields = "__all__"
 
     def validate(self, attrs):
         company = attrs['company']

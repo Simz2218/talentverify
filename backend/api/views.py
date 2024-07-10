@@ -83,24 +83,32 @@ class EmployeeListView(ListCreateAPIView, RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save()
 
-class DepartmentListView(generics.ListAPIView):
+
+
+class DepartmentListView(generics.ListAPIView, generics.UpdateAPIView):
     serializer_class = addDepartmentSerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = 'department_id'
 
     def get_queryset(self):
         user = self.request.user
         return Department.objects.filter(company=user.company)
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
     def perform_update(self, serializer):
         serializer.save()
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = generics.get_object_or_404(queryset, department_id=self.kwargs['department_id'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class UsersListView(generics.ListAPIView):
     serializer_class = RegisterSerializer
