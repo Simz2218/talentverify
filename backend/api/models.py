@@ -51,25 +51,23 @@ class Department(models.Model):
     
     
 class Employee(models.Model):
-    
-    employment_id= models.CharField(primary_key = True,max_length=8, editable=False)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
+    employment_id = models.CharField(primary_key=True, max_length=8, editable=False)
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='employees')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    employee_id = models.CharField(max_length=11,unique=True,null=False)
-    department_id= models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
-    role = models.CharField(max_length=100,null=False)
-    date_started_role =  models.CharField(max_length=100)
-    date_left_role =  models.CharField(max_length=100,null=True)
+    employee_id = models.CharField(max_length=11, unique=True, null=False)
+    department_id = models.ForeignKey('Department', on_delete=models.CASCADE, related_name='employees')
+    role = models.CharField(max_length=100, null=False)
+    date_started_role = models.DateField()
+    date_left_role = models.DateField(null=True, blank=True)
     duties = models.TextField(null=False)
     employment_status = models.BooleanField(default=True)
-    
-    
-    
+
     def save(self, *args, **kwargs):
         if not self.employment_id:
             self.employment_id = str(uuid.uuid4().hex)[:8]
         super().save(*args, **kwargs)
+
 
 
 

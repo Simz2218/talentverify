@@ -23,8 +23,8 @@ def create_or_update_employee_history(sender, instance, created, **kwargs):
         EmployeeHistory.objects.create(
             employment_id=instance,
             company_id=instance.company,
-            department_id=instance.department,
-            role=instance.role,
+            department_id=instance.department_id,
+            roles=instance.role,
             date_started_role=date.today(),
             duties=instance.duties,
         )

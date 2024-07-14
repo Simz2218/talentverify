@@ -11,7 +11,33 @@ from rest_framework.views import APIView
 from rest_framework.parsers import FileUploadParser
 import csv
 import pandas as pd
+from rest_framework import status
+from rest_framework.response import Response
 
+
+@api_view(['POST'])
+def register_company(request):
+    serializer = CoRegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        company = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def add_department(request):
+    serializer = addDepartmentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def add_employee(request):
+    serializer = EmployeeSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class MyTokenSerializerView(TokenObtainPairView):
     serializer_class = MyTokenSerializer
 
@@ -47,6 +73,12 @@ class EmployeesListView(generics.ListCreateAPIView):
         user = self.request.user
         
         return Employee.objects.filter(users=user)
+
+class AddEmployeeListView(generics.CreateAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = [AllowAny]
+
     
     
 

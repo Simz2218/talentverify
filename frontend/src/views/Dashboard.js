@@ -48,7 +48,7 @@ const Dashboard = () => {
     { title: 'First Name', field: 'first_name' },
     { title: 'Last Name', field: 'last_name' },
     { title: 'Employee ID', field: 'employee_id' },
-    { title: 'Department', field: 'department.name' },
+    { title: 'Department', field: 'department_id' },
     { title: 'Role', field: 'role' },
     { title: 'Duties', field: 'duties' },
     { title: 'Employment Status', field: 'employment_status' },
@@ -64,8 +64,8 @@ const Dashboard = () => {
   ];
 
   const employeeHistoryColumns = [
-    { title: 'Company', field: 'company.name' },
-    { title: 'Department', field: 'department.name' },
+    { title: 'Company', field: 'company_id' },
+    { title: 'Department', field: 'department_id' },
     { title: 'Roles', field: 'roles' },
     { title: 'Duties', field: 'duties' },
     { title: 'Date Started', field: 'date_started_role' },
