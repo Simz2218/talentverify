@@ -91,10 +91,8 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ company_name, registration_number, registration_date, address, contact_person, email_address, contact_phone }),
       });
       if (response.status === 201) {
-        const data = await response.json();
         Swal.fire('Company registration successful!', '', 'success');
         history.push("/adddepartment");
-        return data.company_id; // Return the company_id for use in addDepartments
       } else {
         console.log(response.status);
         Swal.fire('Error', 'Something went wrong' + response.status, 'error');
@@ -105,7 +103,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const addDepartments = async (company_id, department_name) => {
+  const addDepartments = async (company, department_name) => {
     let response;
     try {
       response = await fetch("http://127.0.0.1:8000/api/department/", {
@@ -113,12 +111,11 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ company_id, department_name }),
+        body: JSON.stringify({ company, department_name }),
       });
       if (response.status === 201) {
         Swal.fire('Department added successfully!', '', 'success');
         history.push(authTokens ? "/homepage" : "/employees");
-        return company_id; // Return company_id for use in employees
       } else {
         console.log(response.status);
         Swal.fire('Error', 'Something went wrong' + response.status, 'error');
@@ -129,30 +126,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const employees = async (company_id, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status) => {
+  const employees = async (company, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status) => {
+    let response;
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/addEmployee/", {
+      response = await fetch("http://127.0.0.1:8000/api/addEmployee/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          company: company_id, // Use company_id as company ID
-          first_name,
-          last_name,
-          employee_id: `${company_id}-${employee_id}`, // Combine company_id and employee_id
-          department_id: company_id, // Use company_id as department_id
-          role,
-          date_started_role,
-          date_left_role,
-          duties,
-          employment_status
+          company, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status
         }),
       });
       if (response.status === 201) {
-        const data = await response.json();
-        Swal.fire('Employee added successfully!', `Employment ID: ${data.employment_id}, Company ID: ${company_id}`, 'success');
-        history.push("/register"); // Redirect to register page to add new user
+        Swal.fire('Employee added successfully!', '', 'success');
+        history.push(authTokens ? "/homepage" : "/login");
       } else {
         Swal.fire('Error', `Something went wrong: ${response.status}`, 'error');
       }
@@ -160,6 +148,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Error in employees:", error);
       Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
+    return response;
   };
 
   const ContextData = {
