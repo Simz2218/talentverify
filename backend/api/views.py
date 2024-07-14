@@ -39,16 +39,14 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     
-class EmployeesListView(ListCreateAPIView, RetrieveUpdateAPIView):
+class EmployeesListView(generics.ListCreateAPIView):
     serializer_class = EmployeeSerializer
     permission_classes = [IsAuthenticated]
-    
 
     def get_queryset(self):
         user = self.request.user
-        query_set =Employee.objects.get(employment_id=user.employment_id)
-        print(query_set)
-        return query_set
+        
+        return Employee.objects.filter(users=user)
     
     
 

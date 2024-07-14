@@ -52,12 +52,12 @@ class Department(models.Model):
     
 class Employee(models.Model):
     
-    employment_id = models.CharField(primary_key = True,max_length=8, editable=False)
+    employment_id= models.CharField(primary_key = True,max_length=8, editable=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     employee_id = models.CharField(max_length=11,unique=True,null=False)
-    department_id = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
+    department_id= models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
     role = models.CharField(max_length=100,null=False)
     date_started_role =  models.CharField(max_length=100)
     date_left_role =  models.CharField(max_length=100,null=True)
@@ -79,7 +79,7 @@ class User(AbstractUser):
         email = models.EmailField(unique=True)
         password=models.CharField(max_length=21)
         company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='user')
-        employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='users')
+        employment_id= models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='users')
         company_user_status = models.BooleanField(default=True)
         USERNAME_FIELD = 'email'
         REQUIRED_FIELDS = ['username']
@@ -114,7 +114,7 @@ class User(AbstractUser):
 
 
 class EmployeeHistory(models.Model):
-    employment_id =  models.CharField(max_length=100)
+    employment_id= models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee')
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     roles = models.CharField(max_length=100)
