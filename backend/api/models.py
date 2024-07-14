@@ -59,8 +59,8 @@ class Employee(models.Model):
     employee_id = models.CharField(max_length=11,unique=True,null=False)
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
     role = models.CharField(max_length=100,null=False)
-    date_started_role = models.DateField()
-    date_left_role = models.DateField(null=True, blank=True)
+    date_started_role =  models.CharField(max_length=100)
+    date_left_role =  models.CharField(max_length=100,null=True)
     duties = models.TextField(null=False)
     employment_status = models.BooleanField(default=True)
     
@@ -79,7 +79,7 @@ class User(AbstractUser):
         email = models.EmailField(unique=True)
         password=models.CharField(max_length=21)
         company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='user')
-        employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+        employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='users')
         company_user_status = models.BooleanField(default=True)
         USERNAME_FIELD = 'email'
         REQUIRED_FIELDS = ['username']
@@ -114,15 +114,16 @@ class User(AbstractUser):
 
 
 class EmployeeHistory(models.Model):
-    employment_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employment_id =  models.CharField(max_length=100)
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE)
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
     roles = models.CharField(max_length=100)
+    duties = models.TextField(null=False)
     date_started_role = models.DateField()
     date_left_role = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.company_id} - {self.employment_id}"
+        return f"{self.company_id} "
 
 
 

@@ -1,5 +1,7 @@
+
 import { createContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const AuthContext = createContext();
 
@@ -17,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const history = useHistory();
 
-  const loginUser = async (email, password,) => {
+  const loginUser = async (email, password) => {
     let response;
     let data;
     try {
@@ -26,43 +28,30 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password,
-          
-        }),
+        body: JSON.stringify({ email, password }),
       });
       data = await response.json();
 
       if (response.status === 200) {
         console.log("Logged in");
         setAuthTokens(data);
-        setUser(JSON.parse(localStorage.getItem("authTokens")));
+        setUser(data);
         localStorage.setItem("authTokens", JSON.stringify(data));
-        history.push("/");
-        if (data.company_user_status===true) {
-          history.push("/homepage");
-        } else {
-          history.push("/register");
-        }
+        localStorage.setItem("user",JSON.stringify(data))
+        Swal.fire('Login Successful', 'success');
+        history.push("/dashboard");
+      
       } else {
         console.log(response.status);
-        console.log("There was an error");
-        alert("Something went wrong" + response.status);
+        Swal.fire('Error', 'Something went wrong' + response.status, 'error, check your details and try again');
       }
     } catch (error) {
       console.error("Error in loginUser:", error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
   };
 
-  const registerUser = async (
-    email,
-    username,
-    password,
-    password2,
-    company,
-    employment_id
-  ) => {
+  const registerUser = async (email, username, password, password2, company, employment_id) => {
     let response;
     try {
       response = await fetch("http://127.0.0.1:8000/api/register/", {
@@ -70,43 +59,29 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          username,
-          password,
-          password2,
-          company,
-          employment_id,
-        }),
+        body: JSON.stringify({ email, username, password, password2, company, employment_id }),
       });
       if (response.status === 201) {
+        Swal.fire('Registration successful!', '', 'success');
         history.push("/login");
       } else {
         console.log(response.status);
-        console.log("there was an issue with the server");
-        alert("something went wrong" + response.status);
+        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
       }
     } catch (error) {
       console.error("Error in registerUser:", error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
   };
 
   const logoutUser = () => {
     setAuthTokens(null);
     localStorage.removeItem("authTokens");
+    localStorage.removeItem("user");
     history.push("/login");
   };
 
-  const registerCompany = async (
-    company_name,
-    registration_number,
-    registration_date,
-    address,
-    contact_person,
-    email_address,
-    contact_phone,
-    
-  ) => {
+  const registerCompany = async (company_name, registration_number, registration_date, address, contact_person, email_address, contact_phone) => {
     let response;
     try {
       response = await fetch("http://127.0.0.1:8000/api/registerco/", {
@@ -114,36 +89,22 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          company_name,
-          registration_number,
-          registration_date,
-          address,
-          contact_person,
-          email_address,
-          contact_phone,
-          
-        }),
+        body: JSON.stringify({ company_name, registration_number, registration_date, address, contact_person, email_address, contact_phone }),
       });
       if (response.status === 201) {
-        // Handle successful company registration
-
-        history.push("/login");
+        Swal.fire('Company registration successful!', '', 'success');
+        history.push("/adddepartment");
       } else {
         console.log(response.status);
-        console.log("there was an issue with the server");
-        alert("something went wrong" + response.status);
+        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
       }
     } catch (error) {
       console.error("Error in registerCompany:", error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
   };
 
-  const addDepartments = async (
-    company,
-    department_name,
-
-  ) => {
+  const addDepartments = async (company, department_name) => {
     let response;
     try {
       response = await fetch("http://127.0.0.1:8000/api/department/", {
@@ -151,38 +112,22 @@ export const AuthProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          company,
-          department_name,
-        }),
+        body: JSON.stringify({ company, department_name }),
       });
       if (response.status === 201) {
-        history.push("/login");
+        Swal.fire('Department added successfully!', '', 'success');
+        history.push(authTokens ? "/homepage" : "/employees");
       } else {
         console.log(response.status);
-        console.log("there was an issue with the server");
-        alert("something went wrong" + response.status);
+        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
       }
     } catch (error) {
       console.error("Error in addDepartments:", error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
   };
 
-  const employees = async (
-
-    company,
-    first_name,
-    last_name,
-    employee_id,
-    department_id,
-    role,
-    date_started_role,
-    date_left_role,
-    duties,
-    employment_status,
-
-
-  ) => {
+  const employees = async (company, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status) => {
     let response;
     try {
       response = await fetch("http://127.0.0.1:8000/api/employees/", {
@@ -191,31 +136,21 @@ export const AuthProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-
-          company,
-          first_name,
-          last_name,
-          employee_id,
-          department_id,
-          role,
-          date_started_role,
-          date_left_role,
-          duties,
-          employment_status,
+          company, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status
         }),
       });
       if (response.status === 201) {
-        history.push("/homepage");
+        Swal.fire('Employee added successfully!', '', 'success');
+        history.push(authTokens ? "/homepage" : "/login");
       } else {
         console.log(response.status);
-        console.log("there was an issue with the server");
-        alert("something went wrong" + response.status);
+        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
       }
     } catch (error) {
       console.error("Error in employees:", error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
   };
-
 
   const ContextData = {
     user,
@@ -232,7 +167,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (authTokens) {
       setUser(JSON.parse(localStorage.getItem("authTokens")));
-
     }
   }, [authTokens]);
 

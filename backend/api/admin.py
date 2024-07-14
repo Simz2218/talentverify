@@ -33,7 +33,7 @@ class EmployeeHistoryAdmin(admin.ModelAdmin):
 class DepartmentAdmin(admin.ModelAdmin):
    # Department.objects.all().delete()
 
-    list_display=['department_name']
+    list_display=['department_name','department_id']
 
 
 

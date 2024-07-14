@@ -32,21 +32,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
-    'jazzmin',
-    'api',
-    'django.contrib.admin',
     'django.contrib.auth',
+    'api.apps.ApiConfig',  # Remove the duplicate entry
+    'jazzmin',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-  
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

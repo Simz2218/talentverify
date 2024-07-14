@@ -23,9 +23,7 @@ function Navbar() {
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <li class="nav-item">
-                <Link class="nav-link" to="/homepage">Home</Link>
-              </li>
+           
               {token ===null &&
               <>
               <li class="nav-item">
@@ -45,8 +43,11 @@ function Navbar() {
             }
               {token !==null && 
                 <>
+                 <li class="nav-item">
+                <Link class="nav-link" to="/homepage">Admin Dashboard</Link>
+              </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">Dashboard</a>
+                  <Link class="nav-link" to="/dashboard">Dashboard</Link>
                 </li>
                 
                 <li class="nav-item">

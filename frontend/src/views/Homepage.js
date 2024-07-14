@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import MaterialTable, { MTableToolbar } from '@material-table/core';
-import { FaUserPlus, FaBuilding, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaUserPlus, FaBuilding, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
+import {jwtDecode} from 'jwt-decode';
+
+
+
 import {
   fetchEmployees,
   fetchUsers,
@@ -10,13 +14,15 @@ import {
   deleteEmployee,
   updateDepartment,
   deleteDepartment,
-} from './api';
+  uploadEmployeeData
+} from './api'
 
 const Homepage = () => {
   const [employees, setEmployees] = useState([]);
   const [users, setUsers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const { authTokens } = useContext(AuthContext);
+  const token =localStorage.getItem("authTokens");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +43,10 @@ const Homepage = () => {
 
     fetchData();
   }, [authTokens]);
+  if (token){
+    const decode =jwtDecode(token)
+    var username= decode.username
+  }
 
   const handleEmployeeUpdate = async (newData, oldData) => {
     try {
@@ -63,7 +73,10 @@ const Homepage = () => {
     } catch (error) {
       console.error('Error updating department:', error);
     }
+
+  
   };
+  
 
   const handleDepartmentDelete = async (oldData) => {
     try {
@@ -73,6 +86,10 @@ const Homepage = () => {
       console.error('Error deleting department:', error);
     }
   };
+
+  
+  
+  
 
   const employeeColumns = [
     { title: 'Company', field: 'company', filtering: true },
@@ -133,23 +150,52 @@ const Homepage = () => {
     },
   ];
 
-  return (
+  return (    
+  <div
+    className="flex h-screen"
+    style={{
+      backgroundImage: `url('https://i.imgur.com/BrSZUnO.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}
+  >
+    <div className="sidebar bg-gray-800 text-white p-4 flex-shrink-0">
+      {authTokens && (
+
+      <div className="flex-1 p-1 overflow-y-auto">
+        <h1 style={{ color: '#ffffff', fontWeight: 'bold', fontSize: '50px' }}>Hello Admin:   {username}</h1>
+        </div>
+        )}
+      
+      
+        <>
+        
+        </>
+        
+      
+    </div>
+    
     <div className="flex h-screen">
       <div className="sidebar bg-gray-800 text-white p-4 flex-shrink-0">
         <h2 className="text-2xl font-bold mb-4">Actions</h2>
         <div className="flex items-center mb-4">
           <FaUserPlus className="mr-2" />
-          <a href="/add-employee" className="hover:text-gray-300">
+          <a href="/employees" className="hover:text-gray-300">
             Add Employee
           </a>
         </div>
-        <div className="flex items-center">
+        <d className="flex items-center">
           <FaBuilding className="mr-2" />
-          <a href="/add-department" className="hover:text-gray-300">
+          <a href="/adddepartment" className="hover:text-gray-300">
             Add Department
           </a>
-        </div>
+          
+        </d>
+        
+
       </div>
+     
+
       <div className="flex-1 p-4 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-4">Employees</h1>
         <MaterialTable
@@ -182,6 +228,7 @@ const Homepage = () => {
                     props.data.forEach((row) => {
                       if (row.tableData.editing) {
                         handleEmployeeUpdate(row, row.tableData.original);
+                        
                       }
                     });
                   }}
@@ -246,7 +293,10 @@ const Homepage = () => {
         />
       </div>
     </div>
-  );
+  </div>
+);
+
+
 };
 
 export default Homepage;
