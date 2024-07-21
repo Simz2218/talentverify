@@ -25,6 +25,6 @@ export const uploadEmployeeData = (authTokens, file) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  // Ensure the endpoint matches the server-side route: /uploademployees/
+  
   return axios.post(`${API_BASE_URL}/uploademployees/`, formData, getConfig(authTokens));
 };

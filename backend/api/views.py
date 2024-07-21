@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from api.models import Company, Employee, Department, EmployeeHistory, User
-from api.serializer import MyTokenSerializer, RegisterSerializer, CoRegisterSerializer, addDepartmentSerializer, EmployeeSerializer, EmployeeHistorySerializer
+from api.serializer import MyTokenSerializer, RegisterSerializer, CoRegisterSerializer, addDepartmentSerializer, EmployeeSerializer, EmployeeHistorySerializer,UserSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import generics, viewsets
@@ -19,28 +19,39 @@ from rest_framework.response import Response
 def register_company(request):
     serializer = CoRegisterSerializer(data=request.data)
     if serializer.is_valid():
-        company = serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        company=serializer.save()
+        response_data = serializer.data
+        
+        response_data['company_id'] = company.company_id
+        response_data['company_name']=company.company_name
+        return Response(response_data.company, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-def add_department(request):
+def add_department(request,self):
     serializer = addDepartmentSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            department=serializer.save()
+            response_data = serializer.data
+            response_data['department_id'] = department.department_id
+            response_data['company'] = department.company
+            return Response(response_data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def add_employee(request):
     serializer = EmployeeSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            employee=serializer.save()
+            response_data = serializer.data
+            response_data['employment_id'] = employee.employment_id
+            response_data['company'] = employee.company
+            return Response(response_data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MyTokenSerializerView(TokenObtainPairView):
     serializer_class = MyTokenSerializer
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -61,6 +72,19 @@ class EmployeeView(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     permission_classes = [AllowAny]
     serializer_class = EmployeeSerializer
+    
+
+class UserssListView(ListCreateAPIView, RetrieveUpdateAPIView):
+   
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        
+        return User.objects.filter(company='4504bc9d')
+    
+    
+    
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
@@ -155,39 +179,44 @@ class UploadEmployeeDataView(APIView):
         file_extension = file_obj.name.split('.')[-1].lower()
 
         if file_extension == 'csv':
-            return self.handle_csv_upload(file_obj)
+            return self.handle_csv_upload(file_obj, request.user.company)
         elif file_extension in ['txt', 'xls', 'xlsx']:
-            return self.handle_text_or_excel_upload(file_obj, file_extension)
+            return self.handle_text_or_excel_upload(file_obj, file_extension, request.user.company)
         else:
             return Response({'error': 'Unsupported file format'}, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    def handle_csv_upload(self, file_obj):
-        decoded_file = file_obj.read().decode('utf-8').splitlines()
-        reader = csv.DictReader(decoded_file)
-        return self.process_employee_data(reader)
+    def handle_csv_upload(self, file_obj, company):
+        try:
+            decoded_file = file_obj.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            return self.process_employee_data(reader, company)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def handle_text_or_excel_upload(self, file_obj, file_extension):
+    def handle_text_or_excel_upload(self, file_obj, file_extension, company):
         try:
             if file_extension == 'txt':
                 decoded_file = file_obj.read().decode('utf-8').splitlines()
                 reader = csv.DictReader(decoded_file)
-                return self.process_employee_data(reader)
+                return self.process_employee_data(reader, company)
             elif file_extension in ['xls', 'xlsx']:
                 df = pd.read_excel(file_obj)
-                return self.process_employee_data(df.to_dict(orient='records'))
-            else:
-                return Response({'error': 'Unsupported file format'}, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+                return self.process_employee_data(df.to_dict(orient='records'), company)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def process_employee_data(self, data):
+    def process_employee_data(self, data, company):
         try:
             for row in data:
+                row['company'] = company
                 employee_id = row.get('employee_id')
-                try:
-                    employee = Employee.objects.get(employee_id=employee_id)
-                    serializer = EmployeeSerializer(employee, data=row)
-                except Employee.DoesNotExist:
+                if employee_id:
+                    try:
+                        employee = Employee.objects.get(employee_id=employee_id)
+                        serializer = EmployeeSerializer(employee, data=row)
+                    except Employee.DoesNotExist:
+                        serializer = EmployeeSerializer(data=row)
+                else:
                     serializer = EmployeeSerializer(data=row)
 
                 if serializer.is_valid():
@@ -215,3 +244,4 @@ class EmployeesHistoryListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return EmployeeHistory.objects.filter(employment_id=user.employment_id)
+

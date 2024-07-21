@@ -42,12 +42,13 @@ export const AuthProvider = ({ children }) => {
       
       } else {
         console.log(response.status);
-        Swal.fire('Error', 'Something went wrong' + response.status, 'error, check your details and try again');
+        Swal.fire('Error', `Wrong details ,Please Check Your Details And Try again!`, 'error, check your details and try again');
       }
     } catch (error) {
       console.error("Error in loginUser:", error);
       Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
+    
   };
 
   const registerUser = async (email, username, password, password2, company, employment_id) => {
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }) => {
         history.push("/login");
       } else {
         console.log(response.status);
-        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
+        Swal.fire('Error', `Wrong details ,Please Check Your Details And Try again!`, 'error');
       }
     } catch (error) {
       console.error("Error in registerUser:", error);
@@ -91,16 +92,19 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ company_name, registration_number, registration_date, address, contact_person, email_address, contact_phone }),
       });
       if (response.status === 201) {
-        Swal.fire('Company registration successful!', '', 'success');
+        const response_data = await response.json();
+        Swal.fire('Company Added Successfully!',`Company:${response_data.company_name} Company ID:${response_data.company_id}`, '', 'success');
+      
         history.push("/adddepartment");
       } else {
         console.log(response.status);
-        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
+        Swal.fire('Error', `Wrong details ,Please Check Your Details And Try again!`, 'error');
       }
     } catch (error) {
       console.error("Error in registerCompany:", error);
       Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
+    return response;
   };
 
   const addDepartments = async (company, department_name) => {
@@ -113,17 +117,23 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ company, department_name }),
       });
+      
       if (response.status === 201) {
-        Swal.fire('Department added successfully!', '', 'success');
+        
+        
+        const response_data = await response.json();
+        Swal.fire('Department Added Successfully!',`Company ID:${response_data.company} Department ID:${response_data.department_id}`, '', 'success');
+      
         history.push(authTokens ? "/homepage" : "/employees");
       } else {
         console.log(response.status);
-        Swal.fire('Error', 'Something went wrong' + response.status, 'error');
+        Swal.fire('Error', `Wrong details ,Please Check Your Details And Try again!`, 'error');
       }
     } catch (error) {
       console.error("Error in addDepartments:", error);
       Swal.fire('Error', 'An unexpected error occurred.', 'error');
     }
+    return response;
   };
 
   const employees = async (company, first_name, last_name, employee_id, department_id, role, date_started_role, date_left_role, duties, employment_status) => {
@@ -139,10 +149,12 @@ export const AuthProvider = ({ children }) => {
         }),
       });
       if (response.status === 201) {
-        Swal.fire('Employee added successfully!', '', 'success');
+        const response_data = await response.json();
+        Swal.fire('Employee Added Successfully!',`Company ID:${response_data.company} Employment ID:${response_data.employment_id}`, '', 'success');
+        
         history.push(authTokens ? "/homepage" : "/login");
       } else {
-        Swal.fire('Error', `Something went wrong: ${response.status}`, 'error');
+        Swal.fire('Error', `Wrong details ,Please Check Your Details And Try again!`, 'error');
       }
     } catch (error) {
       console.error("Error in employees:", error);

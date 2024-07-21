@@ -2,13 +2,14 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.urls import path, include
 from api import views
 from rest_framework import routers
-from api.views import EmployeeViewSet, EmployeeListView, DepartmentListView, UsersListView, UploadEmployeeDataView,AddEmployeeListView, EmployeeHistoryListView,EmployeesHistoryListView,EmployeesListView
+from api.views import EmployeeViewSet, EmployeeListView, DepartmentListView, UsersListView, UploadEmployeeDataView,AddEmployeeListView, EmployeeHistoryListView,EmployeesHistoryListView,EmployeesListView,UserssListView
 
 router = routers.DefaultRouter()
 router.register(r'employees', EmployeeViewSet)
 
 urlpatterns = [
     path("token/", views.MyTokenSerializerView.as_view()),
+    path("userslist/", views.UserssListView.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("register/", views.RegisterView.as_view()),
     path("registerco/", views.CoRegisterView.as_view()),

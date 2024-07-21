@@ -9,6 +9,8 @@ from django.db.models import Count
 
 
 from django.conf import settings
+from django.db import models
+
 
 
 
@@ -47,7 +49,7 @@ class Department(models.Model):
 
 
     def __str__(self):
-        return f"{self.company_id} - {self.department_name}"
+        return f"{self.company} - {self.department_name}"
     
     
 class Employee(models.Model):

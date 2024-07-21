@@ -22,11 +22,12 @@ function App() {
         <Switch>
 
         <PrivateRoute component= {Dashboard} path="/dashboard"  />
+        <PrivateRoute component={Homepage} path="/homepage" />
         <Route component={Loginpage} path="/login"/>
         <Route component={Registerpage} path="/register"/>
         <Route component={RegisterCo} path="/registerco"/>
         <Route component={AddDepartment} path="/adddepartment"/>
-        <Route component={Homepage} path="/homepage" />
+        
         <Route component={Employees} path="/employees"/>
 
 

@@ -13,6 +13,8 @@ function RegisterCo() {
     const [contact_person, setContact_person] = useState("");
     const[email_address,setEmail_address] = useState("");
     const [contact_phone, setContact_phone] = useState("");
+    const [errors, setErrors] = useState({});
+
 
   
   
@@ -32,9 +34,16 @@ function RegisterCo() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        registerCompany(company_name,registration_number,registration_date,address,contact_person,email_address,contact_phone);
+      const response = await registerCompany(company_name,registration_number,registration_date,address,contact_person,email_address,contact_phone);
+    
+      if (response.status === 201) {
+        
+      } else if (response.status === 400) {
+        const errorData = await response.json();
+        setErrors(errorData);
+      }
+    
     };
-
     return (
         <div>
           <>
@@ -69,6 +78,10 @@ function RegisterCo() {
                                   Welcome to <b> TalentVerify👋</b>
                                 </span>
                               </div>
+                              <p className="mb-5 pb-lg-2" style={{ color: "red" }}>
+                                After Creation save copy of Company id for creation of Departments{" "}
+                                
+                              </p>
                               <h5
                                 className="fw-normal mb-3 pb-3"
                                 style={{ letterSpacing: 1 }}
@@ -83,6 +96,7 @@ function RegisterCo() {
                                   placeholder="Company Name"
                                   onChange={(e) => setCompany_name(e.target.value)}
                                 />
+                                {errors.company_name && <div className="text-danger">{errors.company__name}</div>}
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -92,6 +106,7 @@ function RegisterCo() {
                                   placeholder="Registration Date:yyyy-mm-dd"
                                   onChange={(e) => setRegistration_date(e.target.value)}
                                 />
+                                {errors.registration_date && <div className="text-danger">{errors.registration_date}</div>}
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -101,6 +116,7 @@ function RegisterCo() {
                                   placeholder="Address"
                                   onChange={(e) => setAddress(e.target.value)}
                                 />
+                                {errors.address && <div className="text-danger">{errors.address}</div>}
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -110,6 +126,7 @@ function RegisterCo() {
                                   placeholder="Registration Number"
                                   onChange={(e) => setRegistration_number(e.target.value)}
                                 />
+                                {errors.registration_number && <div className="text-danger">{errors.registration_number}</div>}
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -118,7 +135,9 @@ function RegisterCo() {
                                   className="form-control form-control-lg"
                                   placeholder="Email"
                                   onChange={(e) => setEmail_address(e.target.value)}
+                                  
                                 />
+                                {errors.email_address && <div className="text-danger">{errors.email_address}</div>}
                               </div>
     
                               <div className="form-outline mb-4">
@@ -129,6 +148,7 @@ function RegisterCo() {
                                   placeholder="Contact Person"
                                   onChange={(e) => setContact_person(e.target.value)}
                                 />
+                                {errors.contact_person && <div className="text-danger">{errors.contact_person}</div>}
                               </div>
                               <div className="form-outline mb-4">
                                 <input
@@ -138,6 +158,7 @@ function RegisterCo() {
                                   placeholder="Phone"
                                   onChange={(e) => setContact_phone(e.target.value)}
                                 />
+                                {errors.contact_phone && <div className="text-danger">{errors.contact_phone}</div>}
                               </div>
                               
                               <div className="pt-1 mb-4">

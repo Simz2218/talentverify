@@ -60,7 +60,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=validated_data['username']).exists():
             raise serializers.ValidationError(f"A user with the username '{validated_data['username']}' already exists. Please choose a different username.")
 
-        user = User.objects.create(
+        user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
             company=validated_data['company'],
@@ -80,7 +80,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class CoRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ['company_name', 'registration_number', 'registration_date', 'address', 'contact_person', 'email_address', 'contact_phone']
+        fields = "__all__"
 
     def validate(self, attrs):
         if Company.objects.filter(
@@ -93,7 +93,12 @@ class CoRegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        return Company.objects.create(**validated_data)
+        company = Company.objects.create(**validated_data)
+        response_data = self.to_representation(company)
+        response_data['company_id'] = company.company_id
+        response_data['company_name']=company.company_name
+        return response_data
+
 
 
 class addDepartmentSerializer(serializers.ModelSerializer):
@@ -107,7 +112,11 @@ class addDepartmentSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        return Department.objects.create(**validated_data)
+        department = Department.objects.create(**validated_data)
+        response_data = self.to_representation(department)
+        response_data['department_id'] = department.department_id
+        response_data['company'] = department.company
+        return response_data
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -136,7 +145,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        return Employee.objects.create(**validated_data)
+        employee = Employee.objects.create(**validated_data)
+        response_data = self.to_representation(employee)
+        response_data['employment_id'] = employee.employment_id
+        response_data['company'] = employee.company
+        return response_data
+
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():

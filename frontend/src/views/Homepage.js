@@ -2,14 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import MaterialTable, { MTableToolbar } from '@material-table/core';
 import { FaUserPlus, FaBuilding, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
-import { fetchEmployees, fetchUsers, fetchDepartments, updateEmployee, deleteEmployee, updateDepartment, deleteDepartment, uploadEmployeeData } from './api';
+import { fetchEmployees, fetchUsers, fetchDepartments,fetchEmployeeHistory, updateEmployee, deleteEmployee, updateDepartment, deleteDepartment, uploadEmployeeData, } from './api';
 import {jwtDecode} from 'jwt-decode'; // Correct import statement for jwtDecode
+import Swal from 'sweetalert2';
 
 const Homepage = () => {
   const [employees, setEmployees] = useState([]);
   const [users, setUsers] = useState([]);
   const [departments, setDepartments] = useState([]);
-  
+  const [employeeHistory, setEmployeeHistory] = useState([]);
   const { authTokens } = useContext(AuthContext);
   const token = localStorage.getItem("authTokens");
   const [username, setUsername] = useState("");
@@ -17,15 +18,17 @@ const Homepage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [employeesResponse, usersResponse, departmentsResponse] = await Promise.all([
+        const [employeesResponse, usersResponse, departmentsResponse,employeeHistoryResponseResponse] = await Promise.all([
           fetchEmployees(authTokens),
           fetchUsers(authTokens),
           fetchDepartments(authTokens),
+          fetchEmployeeHistory(authTokens)
         ]);
 
         setEmployees(employeesResponse.data);
         setUsers(usersResponse.data);
         setDepartments(departmentsResponse.data);
+        setEmployeeHistory(employeeHistoryResponseResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -85,6 +88,9 @@ const Homepage = () => {
         formData.append('file', file);
 
         await uploadEmployeeData(authTokens, formData);
+        
+        
+     
 
         // Refresh data after upload
         const [employeesResponse, usersResponse, departmentsResponse] = await Promise.all([
@@ -159,6 +165,15 @@ const Homepage = () => {
         </div>
       ),
     },
+  ];
+  const employeeHistoryColumns = [
+    { title: 'Company', field: 'company_id' },
+    { title: 'Department', field: 'department_id' },
+    { title: 'Roles', field: 'roles' },
+    { title: 'Duties', field: 'duties' },
+    { title: 'Date Started', field: 'date_started_role' },
+    { title: 'Date Left', field: 'date_left_role' },
+    { title: 'Employment ID', field: 'employment_id' },
   ];
 
   return (
@@ -301,7 +316,29 @@ const Homepage = () => {
               onRowUpdate: handleDepartmentUpdate,
               onRowDelete: handleDepartmentDelete,
             }}
+            
           />
+          <h1 style={{ color: '#ffffff', fontWeight: 'bold', fontSize: '50px' }}>History</h1>
+          <MaterialTable
+          title="History"
+            data={employeeHistory}
+            columns={employeeHistoryColumns}
+            options={{
+              pageSize: 10,
+              headerStyle: {
+                backgroundColor: '#f5f5f5',
+                color: '#333',
+                fontWeight: 'bold',
+              },
+              rowStyle: {
+                backgroundColor: '#fff',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+              },
+              filtering: true,
+            }}
+            />
         </div>
       </div>
     </div>

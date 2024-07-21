@@ -24,7 +24,7 @@ function Employees() {
     );
 
     if (response.status === 201) {
-      // Handle success
+      
     } else if (response.status === 400) {
       const errorData = await response.json();
       setErrors(errorData);
@@ -36,7 +36,7 @@ function Employees() {
       <div className="container py-6 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col col-xl-10">
-            <div className="card" style={{ borderRadius: "1rem" }}>
+            <div className="card" style={{ borderRadius: "1.5rem" }}>
               <div className="row g-0">
                 <div className="col-md-6 col-lg-5 d-none d-md-block">
                   <img
@@ -69,6 +69,9 @@ function Employees() {
                       >
                         Sign Up
                       </h5>
+                      <p className="mb-5 pb-lg-2" style={{ color: "red" }}>
+                        After Creation save copy of Company id and Employment ID for creation of User{" "}
+                      </p>
                       <div className="form-outline mb-4">
                         <input
                           type="text"
